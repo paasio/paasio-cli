@@ -147,11 +147,11 @@ class VMC::Cli::Runner
     case verb
 
     when 'version'
-      usage('vmc version')
+      usage('paasio version')
       set_cmd(:misc, :version)
 
     when 'target'
-      usage('vmc target [url] [--url]')
+      usage('paasio target [url] [--url]')
       if @args.size == 1
         set_cmd(:misc, :set_target, 1)
       else
@@ -159,31 +159,31 @@ class VMC::Cli::Runner
       end
 
     when 'targets'
-      usage('vmc targets')
+      usage('paasio targets')
       set_cmd(:misc, :targets)
 
     when 'tokens'
-      usage('vmc tokens')
+      usage('paasio tokens')
       set_cmd(:misc, :tokens)
 
     when 'info'
-      usage('vmc info')
+      usage('paasio info')
       set_cmd(:misc, :info)
 
     when 'runtimes'
-      usage('vmc runtimes')
+      usage('paasio runtimes')
       set_cmd(:misc, :runtimes)
 
     when 'frameworks'
-      usage('vmc frameworks')
+      usage('paasio frameworks')
       set_cmd(:misc, :frameworks)
 
     when 'user'
-      usage('vmc user')
+      usage('paasio user')
       set_cmd(:user, :info)
 
     when 'login'
-      usage('vmc login [email] [--email EMAIL] [--passwd PASS]')
+      usage('paasio login [email] [--email EMAIL] [--passwd PASS]')
       if @args.size == 1
         set_cmd(:user, :login, 1)
       else
@@ -191,11 +191,11 @@ class VMC::Cli::Runner
       end
 
     when 'logout'
-      usage('vmc logout')
+      usage('paasio logout')
       set_cmd(:user, :logout)
 
     when 'passwd'
-      usage('vmc passwd')
+      usage('paasio passwd')
       if @args.size == 1
         set_cmd(:user, :change_password, 1)
       else
@@ -203,7 +203,7 @@ class VMC::Cli::Runner
       end
 
     when 'add-user', 'add_user', 'create_user', 'create-user', 'register'
-      usage('vmc add-user [user] [--email EMAIL] [--passwd PASS]')
+      usage('paasio add-user [user] [--email EMAIL] [--passwd PASS]')
       if @args.size == 1
         set_cmd(:admin, :add_user, 1)
       else
@@ -211,39 +211,39 @@ class VMC::Cli::Runner
       end
 
     when 'delete-user', 'delete_user', 'unregister'
-      usage('vmc delete-user <user>')
+      usage('paasio delete-user <user>')
       set_cmd(:admin, :delete_user, 1)
 
     when 'users'
-      usage('vmc users')
+      usage('paasio users')
       set_cmd(:admin, :users)
 
     when 'apps'
-      usage('vmc apps')
+      usage('paasio apps')
       set_cmd(:apps, :apps)
 
     when 'list'
-      usage('vmc list')
+      usage('paasio list')
       set_cmd(:apps, :list)
 
     when 'start'
-      usage('vmc start <appname>')
+      usage('paasio start <appname>')
       set_cmd(:apps, :start, @args.size == 1 ? 1 : 0)
 
     when 'stop'
-      usage('vmc stop <appname>')
+      usage('paasio stop <appname>')
       set_cmd(:apps, :stop, @args.size == 1 ? 1 : 0)
 
     when 'restart'
-      usage('vmc restart <appname>')
+      usage('paasio restart <appname>')
       set_cmd(:apps, :restart, @args.size == 1 ? 1 : 0)
 
     when 'rename'
-      usage('vmc rename <appname> <newname>')
+      usage('paasio rename <appname> <newname>')
       set_cmd(:apps, :rename, 2)
 
     when 'mem'
-      usage('vmc mem <appname> [memsize]')
+      usage('paasio mem <appname> [memsize]')
       if @args.size == 2
         set_cmd(:apps, :mem, 2)
       else
@@ -251,19 +251,19 @@ class VMC::Cli::Runner
       end
 
     when 'stats'
-      usage('vmc stats <appname>')
+      usage('paasio stats <appname>')
       set_cmd(:apps, :stats, @args.size == 1 ? 1 : 0)
 
     when 'map'
-      usage('vmc map <appname> <url>')
+      usage('paasio map <appname> <url>')
       set_cmd(:apps, :map, 2)
 
     when 'unmap'
-      usage('vmc unmap <appname> <url>')
+      usage('paasio unmap <appname> <url>')
       set_cmd(:apps, :unmap, 2)
 
     when 'delete'
-      usage('vmc delete <appname>')
+      usage('paasio delete <appname>')
       if @options[:all] && @args.size == 0
         set_cmd(:apps, :delete)
       else
@@ -271,7 +271,7 @@ class VMC::Cli::Runner
       end
 
     when 'files'
-      usage('vmc files <appname> [path] [--instance N] [--all] [--prefix]')
+      usage('paasio files <appname> [path] [--instance N] [--all] [--prefix]')
       if @args.size == 1
         set_cmd(:apps, :files, 1)
       else
@@ -279,28 +279,28 @@ class VMC::Cli::Runner
       end
 
     when 'logs'
-      usage('vmc logs <appname> [--instance N] [--all] [--prefix]')
+      usage('paasio logs <appname> [--instance N] [--all] [--prefix]')
       set_cmd(:apps, :logs, 1)
 
     when 'instances', 'scale'
       if @args.size > 1
-        usage('vmc instances <appname> <num|delta>')
+        usage('paasio instances <appname> <num|delta>')
         set_cmd(:apps, :instances, 2)
       else
-        usage('vmc instances <appname>')
+        usage('paasio instances <appname>')
         set_cmd(:apps, :instances, @args.size == 1 ? 1 : 0)
       end
 
     when 'crashes'
-      usage('vmc crashes <appname>')
+      usage('paasio crashes <appname>')
       set_cmd(:apps, :crashes, 1)
 
     when 'crashlogs'
-      usage('vmc crashlogs <appname>')
+      usage('paasio crashlogs <appname>')
       set_cmd(:apps, :crashlogs, 1)
 
     when 'push'
-      usage('vmc push [appname] [--path PATH] [--url URL] [--instances N] [--mem] [--runtime RUNTIME] [--no-start]')
+      usage('paasio push [appname] [--path PATH] [--url URL] [--instances N] [--mem] [--runtime RUNTIME] [--no-start]')
       if @args.size == 1
         set_cmd(:apps, :push, 1)
       else
@@ -308,19 +308,19 @@ class VMC::Cli::Runner
       end
 
     when 'update'
-      usage('vmc update <appname> [--path PATH]')
+      usage('paasio update <appname> [--path PATH]')
       set_cmd(:apps, :update, @args.size == 1 ? 1 : 0)
 
     when 'services'
-      usage('vmc services')
+      usage('paasio services')
       set_cmd(:services, :services)
 
     when 'env'
-      usage('vmc env <appname>')
+      usage('paasio env <appname>')
       set_cmd(:apps, :environment, 1)
 
     when 'env-add'
-      usage('vmc env-add <appname> <variable[=]value>')
+      usage('paasio env-add <appname> <variable[=]value>')
       if @args.size == 2
         set_cmd(:apps, :environment_add, 2)
       elsif @args.size == 3
@@ -328,18 +328,18 @@ class VMC::Cli::Runner
       end
 
     when 'env-del'
-      usage('vmc env-del <appname> <variable>')
+      usage('paasio env-del <appname> <variable>')
       set_cmd(:apps, :environment_del, 2)
 
     when 'create-service', 'create_service'
-      usage('vmc create-service [service] [servicename] [appname] [--name servicename] [--bind appname]')
+      usage('paasio create-service [service] [servicename] [appname] [--name servicename] [--bind appname]')
       set_cmd(:services, :create_service) if @args.size == 0
       set_cmd(:services, :create_service, 1) if @args.size == 1
       set_cmd(:services, :create_service, 2) if @args.size == 2
       set_cmd(:services, :create_service, 3) if @args.size == 3
 
     when 'delete-service', 'delete_service'
-      usage('vmc delete-service <service>')
+      usage('paasio delete-service <service>')
       if @args.size == 1
         set_cmd(:services, :delete_service, 1)
       else
@@ -347,23 +347,23 @@ class VMC::Cli::Runner
       end
 
     when 'bind-service', 'bind_service'
-      usage('vmc bind-service <servicename> <appname>')
+      usage('paasio bind-service <servicename> <appname>')
       set_cmd(:services, :bind_service, 2)
 
     when 'unbind-service', 'unbind_service'
-      usage('vmc unbind-service <servicename> <appname>')
+      usage('paasio unbind-service <servicename> <appname>')
       set_cmd(:services, :unbind_service, 2)
 
     when 'clone-services'
-      usage('vmc clone-services <src-app> <dest-app>')
+      usage('paasio clone-services <src-app> <dest-app>')
       set_cmd(:services, :clone_services, 2)
 
     when 'aliases'
-      usage('vmc aliases')
+      usage('paasio aliases')
       set_cmd(:misc, :aliases)
 
     when 'alias'
-      usage('vmc alias <alias[=]command>')
+      usage('paasio alias <alias[=]command>')
       if @args.size == 1
         set_cmd(:misc, :alias, 1)
       elsif @args.size == 2
@@ -371,11 +371,11 @@ class VMC::Cli::Runner
       end
 
     when 'unalias'
-      usage('vmc unalias <alias>')
+      usage('paasio unalias <alias>')
       set_cmd(:misc, :unalias, 1)
 
     when 'tunnel'
-      usage('vmc tunnel [servicename] [clientcmd] [--port port]')
+      usage('paasio tunnel [servicename] [clientcmd] [--port port]')
       set_cmd(:services, :tunnel, 0) if @args.size == 0
       set_cmd(:services, :tunnel, 1) if @args.size == 1
       set_cmd(:services, :tunnel, 2) if @args.size == 2
@@ -395,16 +395,16 @@ class VMC::Cli::Runner
       parse_options!
 
     when 'manifest'
-      usage('vmc manifest')
+      usage('paasio manifest')
       set_cmd(:manifest, :edit)
 
     when 'extend-manifest'
-      usage('vmc extend-manifest')
+      usage('paasio extend-manifest')
       set_cmd(:manifest, :extend, 1)
 
     else
       if verb
-        display "vmc: Unknown command [#{verb}]"
+        display "paasio: Unknown command [#{verb}]"
         display basic_usage
         exit(false)
       end

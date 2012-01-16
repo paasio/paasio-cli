@@ -7,14 +7,14 @@ require 'json/pure'
 module VMC::Cli
   class Config
 
-    DEFAULT_TARGET  = 'api.vcap.me'
-    DEFAULT_SUGGEST = 'vcap.me'
+    DEFAULT_TARGET  = 'api.paas.io'
+    DEFAULT_SUGGEST = 'paas.io'
 
-    TARGET_FILE    = '~/.vmc_target'
-    TOKEN_FILE     = '~/.vmc_token'
-    INSTANCES_FILE = '~/.vmc_instances'
-    ALIASES_FILE   = '~/.vmc_aliases'
-    CLIENTS_FILE   = '~/.vmc_clients'
+    TARGET_FILE    = '~/.paasio_target'
+    TOKEN_FILE     = '~/.paasio_token'
+    INSTANCES_FILE = '~/.paasio_instances'
+    ALIASES_FILE   = '~/.paasio_aliases'
+    CLIENTS_FILE   = '~/.paasio_clients'
 
     STOCK_CLIENTS = File.expand_path("../../../config/clients.yml", __FILE__)
 

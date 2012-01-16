@@ -5,8 +5,8 @@ module VMC
   VERSION = '0.3.2'
 
   # Targets
-  DEFAULT_TARGET = 'https://api.cloudfoundry.com'
-  DEFAULT_LOCAL_TARGET = 'http://api.vcap.me'
+  DEFAULT_TARGET = 'https://api.paas.io'
+  DEFAULT_LOCAL_TARGET = 'http://api.paas.io'
 
   # General Paths
   INFO_PATH            = 'info'

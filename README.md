@@ -1,17 +1,20 @@
-# VMC
+# paasio
 
-The VMware Cloud CLI. This is the command line interface to VMware's Application Platform
+The PaaS.io CLI. This is the command line interface to PaaS.io's Application Platform
 
-_Copyright 2010-2011, VMware, Inc. Licensed under the
+paasio is based on VMware's default vmc implementation, but contains
+several extensions to work with PaaS.io's core platform.
+
+_Copyright 2012, PaaS.io, Inc.
+Copyright 2010-2011, VMware, Inc. Licensed under the
 MIT license, please see the LICENSE file.  All rights reserved._
 
-    Usage: vmc [options] command [<args>] [command_options]
-    Try 'vmc help [command]' or 'vmc help options' for more information.
+    Usage: paasio [options] command [<args>] [command_options]
+    Try 'paasio help [command]' or 'paasio help options' for more information.
 
-    Currently available vmc commands are:
+    Currently available paasio commands are:
 
     Getting Started
-      target [url]                                 Reports current target or sets a new target
       login  [email] [--email, --passwd]           Login
       info                                         System and account information
 
@@ -88,7 +91,6 @@ MIT license, please see the LICENSE file.  All rights reserved._
 
 ## Simple Story (for Ruby apps)
 
-    vmc target api.cloudfoundry.com
-    vmc login
+    paasio login
     bundle package
-    vmc push
+    paasio push
