@@ -12,10 +12,10 @@ module VMC::Cli
       'Lift'   =>   ['lift',    { :mem => '512M', :description => 'Scala Lift Application'}],
       'JavaWeb'  => ['java_web',{ :mem => '512M', :description => 'Java Web Application'}],
       'Sinatra'  => ['sinatra', { :mem => '128M', :description => 'Sinatra Application'}],
-      'Node'     => ['node',    { :mem => '64M',  :description => 'Node.js Application'}],
+      'Node'     => ['node',    { :mem => '128M',  :description => 'Node.js Application'}],
       'PHP'      => ['php',     { :mem => '128M', :description => 'PHP Application'}],
-      'Erlang/OTP Rebar' => ['otp_rebar',  { :mem => '64M',  :description => 'Erlang/OTP Rebar Application'}],
-      'WSGI'     => ['wsgi',    { :mem => '64M',  :description => 'Python WSGI Application'}],
+      'Erlang/OTP Rebar' => ['otp_rebar',  { :mem => '128M',  :description => 'Erlang/OTP Rebar Application'}],
+      'WSGI'     => ['wsgi',    { :mem => '128M',  :description => 'Python WSGI Application'}],
       'Django'   => ['django',  { :mem => '128M', :description => 'Python Django Application'}],
     }
 

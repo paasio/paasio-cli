@@ -495,19 +495,18 @@ module VMC::Cli::Command
     end
 
     def mem_choices
-      default = ['64M', '128M', '256M', '512M', '1G', '2G']
+      default = ['128M', '256M', '512M', '1G', '2G']
 
       return default unless client_info
       return default unless (usage = client_info[:usage] and limits = client_info[:limits])
 
       available_for_use = limits[:memory].to_i - usage[:memory].to_i
-      check_has_capacity_for(64) if available_for_use < 64
-      return ['64M'] if available_for_use < 128
-      return ['64M', '128M'] if available_for_use < 256
-      return ['64M', '128M', '256M'] if available_for_use < 512
-      return ['64M', '128M', '256M', '512M'] if available_for_use < 1024
-      return ['64M', '128M', '256M', '512M', '1G'] if available_for_use < 2048
-      return ['64M', '128M', '256M', '512M', '1G', '2G']
+      check_has_capacity_for(128) if available_for_use < 128
+      return ['128M'] if available_for_use < 256
+      return ['128M', '256M'] if available_for_use < 512
+      return ['128M', '256M', '512M'] if available_for_use < 1024
+      return ['128M', '256M', '512M', '1G'] if available_for_use < 2048
+      return ['128M', '256M', '512M', '1G', '2G']
     end
 
     def normalize_mem(mem)
