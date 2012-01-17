@@ -32,14 +32,12 @@ Currently available paasio commands are:
     apps                                         List deployed applications
 
   Application Creation
-    push [appname]                               Create, push, map, and start a new application
-    push [appname] --path                        Push application from specified path
-    push [appname] --url                         Set the url for the application
-    push [appname] --instances <N>               Set the expected number <N> of instances
-    push [appname] --mem M                       Set the memory reservation for the application
-    push [appname] --runtime RUNTIME             Set the runtime to use for the application
-    push [appname] --debug [MODE]                Push application and start in a debug mode
-    push [appname] --no-start                    Do not auto-start the application
+    create [appname]                             Create a new application
+    create [appname] --url                       Set the url for the application
+    create [appname] --instances <N>             Set the expected number <N> of instances
+    create [appname] --mem M                     Set the memory reservation for the application
+    create [appname] --runtime RUNTIME           Set the runtime to use for the application
+    create [appname] --debug [MODE]              Push application and start in a debug mode
 
   Application Operations
     start <appname> [--debug [MODE]]             Start the application

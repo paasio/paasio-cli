@@ -299,6 +299,14 @@ class VMC::Cli::Runner
       usage('paasio crashlogs <appname>')
       set_cmd(:apps, :crashlogs, 1)
 
+    when 'create'
+      usage('paasio create [appname] [--url URL] [--instances N] [--mem] [--runtime RUNTIME] [--remote NAME]')
+      if @args.size == 1
+        set_cmd(:apps, :create, 1)
+      else
+        set_cmd(:apps, :create, 0)
+      end
+
     when 'push'
       usage('paasio push [appname] [--path PATH] [--url URL] [--instances N] [--mem] [--runtime RUNTIME] [--no-start]')
       if @args.size == 1

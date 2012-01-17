@@ -242,6 +242,19 @@ module VMC::Cli::Command
       end
     end
 
+    def create(appname=nil)
+      created = false
+      each_app(false) do |name|
+        display "Creating application '#{name}'..." if name
+        do_create(name)
+        created = true
+      end
+
+      unless created
+        do_create(appname)
+      end
+    end
+
     def push(appname=nil)
       unless no_prompt || @options[:path]
         proceed = ask(
@@ -828,6 +841,130 @@ module VMC::Cli::Command
       display 'OK'.green
     end
 
+    def do_create(appname=nil)
+      instances = info(:instances, 1)
+      exec = info(:exec, 'thin start')
+
+      ignore_framework = @options[:noframework]
+
+      appname ||= info(:name)
+      url = info(:url) || info(:urls)
+      mem, memswitch = nil, info(:mem)
+      memswitch = normalize_mem(memswitch) if memswitch
+
+      # Check app existing upfront if we have appname
+      app_checked = false
+      if appname
+        err "Application '#{appname}' already exists, please choose another name" if app_exists?(appname)
+        app_checked = true
+      else
+        raise VMC::Client::AuthError unless client.logged_in?
+      end
+
+      # check if we have hit our app limit
+      check_app_limit
+      # check memsize here for capacity
+      if memswitch && !no_start
+        check_has_capacity_for(mem_choice_to_quota(memswitch) * instances)
+      end
+
+      if !no_prompt && (appname.nil? || appname.empty?)
+        appname ||= ask("Application Name")
+        err "Application Name required." if appname.nil? || appname.empty?
+      else
+        puts "Using application name \"#{appname}\"..."
+      end
+
+      if !app_checked and app_exists?(appname)
+        err "Application '#{appname}' already exists, please choose another name."
+      end
+
+      default_url = "#{appname}.#{VMC::Cli::Config.suggest_url}"
+
+      unless no_prompt || url
+        url = ask(
+          "Application Deployed URL",
+          :default => default_url
+        )
+
+        # common error case is for prompted users to answer y or Y or yes or
+        # YES to this ask() resulting in an unintended URL of y. Special case
+        # this common error
+        url = nil if YES_SET.member? url
+      end
+
+      url ||= default_url
+
+      if ignore_framework
+        framework = VMC::Cli::Framework.new
+      elsif f = info(:framework)
+        info = Hash[f["info"].collect { |k, v| [k.to_sym, v] }]
+
+        framework = VMC::Cli::Framework.new(f["name"], info)
+        exec = framework.exec if framework && framework.exec
+      else
+        @path = @application = '.'
+        framework = detect_framework(prompt_ok)
+      end
+
+      err "Application Type undetermined for '#{appname}'" unless framework
+
+      if memswitch
+        mem = memswitch
+      elsif prompt_ok
+        mem = ask("Memory Reservation",
+                  :default => framework.memory, :choices => mem_choices)
+      else
+        mem = framework.memory
+      end
+
+      # Set to MB number
+      mem_quota = mem_choice_to_quota(mem)
+
+      # check memsize here for capacity
+      check_has_capacity_for(mem_quota * instances)
+
+      display 'Creating Application: ', false
+
+      manifest = {
+        :name => "#{appname}",
+        :staging => {
+           :framework => framework.name,
+           :runtime => info(:runtime)
+        },
+        :uris => Array(url),
+        :instances => instances,
+        :resources => {
+          :memory => mem_quota
+        },
+      }
+
+      # Send the manifest to the cloud controller
+      client.create_app(appname, manifest)
+      display 'OK'.green
+
+      # Get the app info back
+      app = client.app_info(appname)
+      case app[:scm_type]
+      when 'git'
+        create_git_remote(appname, @options[:remote] || 'paasio', app[:repository_url])
+      when 'hg'
+        create_hg_remote(appname, @options[:remote] || 'paasio', app[:repository_url])
+      end
+
+      existing = Set.new(client.services.collect { |s| s[:name] })
+
+      if @app_info && services = @app_info["services"]
+        services.each do |name, info|
+          unless existing.include? name
+            create_service_banner(info["type"], name, true)
+          end
+
+          bind_service_banner(name, appname)
+        end
+      end
+    end
+
     def do_push(appname=nil)
       unless @app_info || no_prompt
         @manifest = { "applications" => { @path => { "name" => appname } } }
@@ -1012,6 +1149,51 @@ module VMC::Cli::Command
         end
       end
     end
+
+    def create_hg_remote(appname, remote, repourl)
+      return unless has_hg?
+      return unless File.exists?(".hg")
+
+      # read hgrc
+      hgrc = File.read(".hg/hgrc")
+      if hgrc =~ /\[paths\]/
+        hgrc.sub(/\[paths\]/, "[paths]\n#{remote} = #{repourl}")
+      else
+        hgrc << "\n[paths]\n#{remote} = #{repourl}\n"
+      end
+
+      # rewrite the hgrc
+      f = File.open('.hg/hgrc', 'w')
+      f.puts hgrc
+      f.close
+
+      display "Mercurial path #{remote} added"
+    end
+
+    def create_git_remote(appname, remote, repourl)
+      return unless has_git?
+      return unless File.exists?(".git")
+      return if git('remote').split("\n").include?(remote)
+      git "remote add #{remote} #{repourl}"
+      display "Git remote #{remote} added"
+    end
+
+    def has_hg?
+      %x{ hg --version }
+      $?.success?
+    end
+
+    def has_git?
+      %x{ git --version }
+      $?.success?
+    end
+
+    def git(args)
+      return "" unless has_git?
+      flattened_args = [args].flatten.compact.join(" ")
+      %x{ git #{flattened_args} 2>&1 }.strip
+    end
+
   end
 
   class FileWithPercentOutput < ::File
