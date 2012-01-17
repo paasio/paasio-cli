@@ -86,6 +86,9 @@ class VMC::Cli::Runner
 
       opts.on('--runtime RUNTIME') { |rt|    @options[:runtime] = rt }
 
+      opts.on('--remote REMOTE')   { |r|     @options[:remote] = r }
+      opts.on('--scm-type TYPE')   { |t|     @options[:scm_type] = t if t == 'git' || t == 'hg' }
+
       # deprecated
       opts.on('--exec EXEC')       { |exec|  @options[:exec] = exec }
       opts.on('--noframework')     {         @options[:noframework] = true }
@@ -300,7 +303,7 @@ class VMC::Cli::Runner
       set_cmd(:apps, :crashlogs, 1)
 
     when 'create'
-      usage('paasio create [appname] [--url URL] [--instances N] [--mem] [--runtime RUNTIME] [--remote NAME]')
+      usage('paasio create [appname] [--url URL] [--instances N] [--mem] [--runtime RUNTIME] [--scm-type git|hg] [--remote NAME]')
       if @args.size == 1
         set_cmd(:apps, :create, 1)
       else

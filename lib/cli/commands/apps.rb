@@ -938,6 +938,7 @@ module VMC::Cli::Command
           :memory => mem_quota
         },
       }
+      manifest[:scm_type] = @options[:scm_type] if @options[:scm_type]
 
       # Send the manifest to the cloud controller
       client.create_app(appname, manifest)
