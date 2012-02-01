@@ -310,6 +310,10 @@ class VMC::Cli::Runner
         set_cmd(:apps, :create, 0)
       end
 
+    when 'upload'
+      usage('paasio upload <appname> [--path PATH]')
+      set_cmd(:apps, :upload, @args.size == 1 ? 1 : 0)
+
     when 'push'
       usage('paasio push [appname] [--path PATH] [--url URL] [--instances N] [--mem] [--runtime RUNTIME] [--no-start]')
       if @args.size == 1

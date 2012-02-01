@@ -47,7 +47,7 @@ Currently available paasio commands are:
     rename <appname> <newname>                   Rename the application
 
   Application Updates
-    update <appname> [--path,--debug [MODE]]     Update the application bits
+    upload <appname> [--path,--debug [MODE]]     Upload the application bits
     mem <appname> [memsize]                      Update the memory reservation for an application
     map <appname> <url>                          Register the application to the url
     unmap <appname> <url>                        Unregister the application from the url

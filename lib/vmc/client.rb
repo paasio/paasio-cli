@@ -157,6 +157,16 @@ class VMC::Client
     body
   end
 
+  def app_most_recent_deploy(name)
+    check_login_status
+    begin
+      json_get(path(VMC::APPS_PATH, name, 'most_recent_deploy'))
+    rescue BadResponse
+      # this is probably because there was no deploy.. it returns "null", which JSON.parse can't handle
+      return nil
+    end
+  end
+
   ######################################################
   # Services
   ######################################################

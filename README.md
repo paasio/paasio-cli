@@ -37,7 +37,7 @@ MIT license, please see the LICENSE file.  All rights reserved._
       rename <appname> <newname>                   Rename the application
 
     Application Updates
-      update <appname> [--path]                    Update the application bits
+      upload <appname> [--path]                    Upload the application bits
       mem <appname> [memsize]                      Update the memory reservation for an application
       map <appname> <url>                          Register the application to the url
       unmap <appname> <url>                        Unregister the application from the url

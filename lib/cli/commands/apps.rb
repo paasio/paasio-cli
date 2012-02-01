@@ -223,6 +223,43 @@ module VMC::Cli::Command
       end
     end
 
+    def upload(appname=nil)
+      if appname
+        app = client.app_info(appname)
+
+        # check deploy status
+        deploy = client.app_most_recent_deploy(appname)
+        if deploy && deploy[:sha]
+          unless has_git_commit?(@path, deploy[:sha])
+            unless ask("The last commit in the currently deployed code is:\n  #{deploy[:sha]}.\n\nThe current path doesn't include that commit.\nManually uploading may revert changes.\nContinue anyway?", :default => false)
+              exit 0
+            end
+          end
+        end
+
+        upload_app_bits(appname, @path)
+        restart appname if app[:state] == 'STARTED'
+      else
+        each_app do |name|
+          display "Updating application '#{name}'..."
+          app = client.app_info(name)
+
+          # check deploy status
+          deploy = client.app_most_recent_deploy(name)
+          if deploy && deploy[:sha]
+            unless has_git_commit?(@application, deploy[:sha])
+              unless ask("The last commit in the currently deployed code is:\n  #{deploy[:sha]}.\n\nThe current path doesn't include that commit.\nManually uploading may revert changes.\nContinue anyway?", :default => false)
+                exit 0
+              end
+            end
+          end
+
+          upload_app_bits(name, @application)
+          restart name if app[:state] == 'STARTED'
+        end
+      end
+    end
+
     def update(appname=nil)
       if appname
         app = client.app_info(appname)
@@ -348,6 +385,7 @@ module VMC::Cli::Command
     end
 
     def check_unreachable_links(path)
+      path = File.expand_path(path)
       files = Dir.glob("#{path}/**/*", File::FNM_DOTMATCH)
       unreachable_paths = files.select { |f|
         File.symlink? f and !Pathname.new(f).realpath.to_s.include? path
@@ -1186,6 +1224,12 @@ module VMC::Cli::Command
     def has_git?
       %x{ git --version }
       $?.success?
+    end
+
+    def has_git_commit?(path, sha)
+      result = git("--git-dir=#{File.expand_path(File.join(path, '.git'))} branch --contains #{sha}")
+      return false unless $?.success?
+      !!(result =~ /^\*\s/)
     end
 
     def git(args)
