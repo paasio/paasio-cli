@@ -7,7 +7,7 @@ require 'json/pure'
 module VMC::Cli
   class Config
 
-    DEFAULT_TARGET  = 'api.paas.io'
+    DEFAULT_TARGET  = 'https://api.paas.io'
     DEFAULT_SUGGEST = 'paas.io'
 
     TARGET_FILE    = '~/.paasio_target'

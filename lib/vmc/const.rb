@@ -6,7 +6,7 @@ module VMC
 
   # Targets
   DEFAULT_TARGET = 'https://api.paas.io'
-  DEFAULT_LOCAL_TARGET = 'http://api.paas.io'
+  DEFAULT_LOCAL_TARGET = 'https://api.paas.io'
 
   # General Paths
   INFO_PATH            = 'info'
