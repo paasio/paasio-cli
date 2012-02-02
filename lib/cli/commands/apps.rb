@@ -1203,7 +1203,7 @@ module VMC::Cli::Command
       return unless File.exists?(".hg")
 
       # read hgrc
-      hgrc = File.read(".hg/hgrc")
+      hgrc = File.exists?('.hg/hgrc') ? File.read(".hg/hgrc") : ""
       if hgrc =~ /\[paths\]/
         hgrc.sub(/\[paths\]/, "[paths]\n#{remote} = #{repourl}")
       else
