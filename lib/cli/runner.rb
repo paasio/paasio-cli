@@ -88,6 +88,7 @@ class VMC::Cli::Runner
 
       opts.on('--remote REMOTE')   { |r|     @options[:remote] = r }
       opts.on('--scm-type TYPE')   { |t|     @options[:scm_type] = t if t == 'git' || t == 'hg' }
+      opts.on('--skip-scm')        {         @options[:skip_scm] = true }
 
       # deprecated
       opts.on('--exec EXEC')       { |exec|  @options[:exec] = exec }

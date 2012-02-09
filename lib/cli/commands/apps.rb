@@ -230,8 +230,8 @@ module VMC::Cli::Command
         # check deploy status
         deploy = client.app_most_recent_deploy(appname)
         if deploy && deploy[:sha]
-          unless has_git_commit?(@path, deploy[:sha])
-            unless ask("The last commit in the currently deployed code is:\n  #{deploy[:sha]}.\n\nThe current path doesn't include that commit.\nManually uploading may revert changes.\nContinue anyway?", :default => false)
+          unless has_commit?(app, @path, deploy[:sha])
+            unless ask("The last commit in the currently deployed code is:\n  #{deploy[:sha]}\n\nThe current path doesn't include that commit.\nManually uploading may revert changes.\nContinue anyway?", :default => false)
               exit 0
             end
           end
@@ -247,8 +247,8 @@ module VMC::Cli::Command
           # check deploy status
           deploy = client.app_most_recent_deploy(name)
           if deploy && deploy[:sha]
-            unless has_git_commit?(@application, deploy[:sha])
-              unless ask("The last commit in the currently deployed code is:\n  #{deploy[:sha]}.\n\nThe current path doesn't include that commit.\nManually uploading may revert changes.\nContinue anyway?", :default => false)
+            unless has_commit?(app, @application, deploy[:sha])
+              unless ask("The last commit in the currently deployed code is:\n  #{deploy[:sha]}\n\nThe current path doesn't include that commit.\nManually uploading may revert changes.\nContinue anyway?", :default => false)
                 exit 0
               end
             end
@@ -985,7 +985,7 @@ module VMC::Cli::Command
           :memory => mem_quota
         },
       }
-      manifest[:scm_type] = @options[:scm_type] if @options[:scm_type]
+      manifest[:scm_type] = @options[:scm_type] || 'git' unless @options[:skip_scm]
 
       # Send the manifest to the cloud controller
       client.create_app(appname, manifest)
@@ -1236,10 +1236,23 @@ module VMC::Cli::Command
       $?.success?
     end
 
+    def has_commit?(app, path, sha)
+      case app[:scm_type]
+      when 'git'
+        has_git_commit?(path, sha)
+      when 'hg'
+        has_hg_commit?(path, sha)
+      end
+    end
+
     def has_git_commit?(path, sha)
       result = git("--git-dir=#{File.expand_path(File.join(path, '.git'))} branch --contains #{sha}")
       return false unless $?.success?
       !!(result =~ /^\*\s/)
+    end
+
+    def has_hg_commit?(path, sha)
+      true # TODO
     end
 
     def git(args)
