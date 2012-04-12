@@ -44,7 +44,6 @@ Currently available paasio commands are:
     stop  <appname>                              Stop the application
     restart <appname> [--debug [MODE]]           Restart the application
     delete <appname>                             Delete the application
-    rename <appname> <newname>                   Rename the application
 
   Application Updates
     upload <appname> [--path,--debug [MODE]]     Upload the application bits
@@ -88,6 +87,15 @@ Currently available paasio commands are:
   System
     runtimes                                     Display the supported runtimes of the target system
     frameworks                                   Display the recognized frameworks of the target system
+
+  Micro Cloud Foundry
+    micro status                                 Display Micro Cloud Foundry VM status
+    micro offline                                Configure Micro Cloud Foundry VM for offline mode
+    micro online                                 Configure Micro Cloud Foundry VM for online mode
+      [--vmx file]                               Path to micro.vmx
+      [--vmrun executable]                       Path to vmrun executable
+      [--password cleartext]                     Cleartext password for guest VM vcap user
+      [--save]                                   Save cleartext password in ~/.vmc_micro
 
   Misc
     aliases                                      List aliases

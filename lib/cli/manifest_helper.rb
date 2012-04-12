@@ -82,22 +82,11 @@ module VMC::Cli::ManifestHelper
     name = manifest("name") ||
       set(ask("Application Name", :default => manifest("name")), "name")
 
-    url_template = manifest("url") || DEFAULTS["url"]
-    url_resolved = url_template.dup
-    resolve_lexically(url_resolved)
 
-    url = ask("Application Deployed URL", :default => url_resolved)
 
-    url = url_template if url == url_resolved
-
-    # common error case is for prompted users to answer y or Y or yes or
-    # YES to this ask() resulting in an unintended URL of y. Special
-    # case this common error
-    url = DEFAULTS["url"] if YES_SET.member? url
-
-    set url, "url"
-
-    unless manifest "framework"
+    if manifest "framework"
+      framework = VMC::Cli::Framework.lookup_by_framework manifest("framework","name")
+    else
       framework = detect_framework
       set framework.name, "framework", "name"
       set(
@@ -110,11 +99,44 @@ module VMC::Cli::ManifestHelper
       )
     end
 
+    default_runtime = manifest "runtime"
+    if not default_runtime
+      default_runtime = framework.default_runtime(@application)
+      set(detect_runtime(default_runtime), "runtime") if framework.prompt_for_runtime?
+    end
+    default_command = manifest "command"
+    set ask("Start Command", :default => default_command), "command" if framework.require_start_command?
+
+    url_template = manifest("url") || DEFAULTS["url"]
+    url_resolved = url_template.dup
+    resolve_lexically(url_resolved)
+
+    if !framework.require_url?
+      url_resolved = "None"
+    end
+    url = ask("Application Deployed URL", :default => url_resolved)
+
+    if url == url_resolved && url != "None"
+      url = url_template
+    end
+
+    # common error case is for prompted users to answer y or Y or yes or
+    # YES to this ask() resulting in an unintended URL of y. Special
+    # case this common error
+    url = url_resolved if YES_SET.member? url
+
+    if(url == "None")
+      url = nil
+    end
+
+    set url, "url"
+
+    default_mem = manifest("mem")
+    default_mem = framework.memory(manifest("runtime")) if not default_mem
     set ask(
       "Memory reservation",
       :default =>
-        manifest("mem") ||
-          manifest("framework", "info", "mem") ||
+          default_mem ||
           DEFAULTS["mem"],
       :choices => ["128M", "256M", "512M", "1G", "2G"]
     ), "mem"
@@ -125,10 +147,20 @@ module VMC::Cli::ManifestHelper
     ), "instances"
 
     unless manifest "services"
+      user_services = client.services
+      user_services.sort! {|a, b| a[:name] <=> b[:name] }
+
+      unless user_services.empty?
+        if ask "Bind existing services to '#{name}'?", :default => false
+          bind_services(user_services)
+        end
+      end
+
       services = client.services_info
       unless services.empty?
-        bind = ask "Would you like to bind any services to '#{name}'?", :default => false
-        bind_services(services.values.collect(&:keys).flatten) if bind
+        if ask "Create services to bind to '#{name}'?", :default => false
+          create_services(services.values.collect(&:keys).flatten)
+        end
       end
     end
 
@@ -155,7 +187,7 @@ module VMC::Cli::ManifestHelper
 
   # Detect the appropriate framework.
   def detect_framework(prompt_ok = true)
-    framework = VMC::Cli::Framework.detect(@application)
+    framework = VMC::Cli::Framework.detect(@application, frameworks_info)
     framework_correct = ask("Detected a #{framework}, is this correct?", :default => true) if prompt_ok && framework
     if prompt_ok && (framework.nil? || !framework_correct)
       display "#{"[WARNING]".yellow} Can't determine the Application Type." unless framework
@@ -174,20 +206,52 @@ module VMC::Cli::ManifestHelper
     framework
   end
 
-  def bind_services(services)
+  # Detect the appropriate runtime.
+  def detect_runtime(default, prompt_ok=true)
+    runtime = nil
+    runtime_keys=[]
+    runtimes_info.keys.each {|runtime_key| runtime_keys << runtime_key.dup }
+    runtime_keys.sort!
+    if prompt_ok
+      runtime =  ask(
+          "Select Runtime",
+          :indexed => true,
+          :default => default,
+          :choices => runtime_keys
+      )
+      display "Selected #{runtime}"
+    end
+    runtime
+  end
+
+  def bind_services(user_services, chosen = 0)
+    svcname = ask(
+      "Which one?",
+      :indexed => true,
+      :choices => user_services.collect { |p| p[:name] })
+
+    svc = user_services.find { |p| p[:name] == svcname }
+
+    set svc[:vendor], "services", svcname, "type"
+
+    if chosen + 1 < user_services.size && ask("Bind another?", :default => false)
+      bind_services(user_services, chosen + 1)
+    end
+  end
+
+  def create_services(services)
     svcs = services.collect(&:to_s).sort!
 
-    display "The following system services are available"
     configure_service(
       ask(
-        "Please select the one you wish to provision",
+        "What kind of service?",
         :indexed => true,
         :choices => svcs
-      ).to_sym
+      )
     )
 
-    if ask "Would you like to bind another service?", :default => false
-      bind_services(services)
+    if ask "Create another?", :default => false
+      create_services(services)
     end
   end
 
