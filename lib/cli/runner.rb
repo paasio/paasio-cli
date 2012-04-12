@@ -292,13 +292,8 @@ class VMC::Cli::Runner
         usage('paasio instances <appname> <num|delta>')
         set_cmd(:apps, :instances, 2)
       else
-<<<<<<< HEAD
         usage('paasio instances <appname>')
-        set_cmd(:apps, :instances, @args.size == 1 ? 1 : 0)
-=======
-        usage('vmc instances <appname>')
         set_cmd(:apps, :instances, 1)
->>>>>>> vmware
       end
 
     when 'crashes'
